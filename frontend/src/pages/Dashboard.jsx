@@ -21,6 +21,8 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeNav, setActiveNav] = useState("dashboard");
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   useEffect(() => {
@@ -34,6 +36,18 @@ function Dashboard() {
 
   const handleRetry = () => {
     dispatch(fetchMachines());
+  };
+
+  const handleNavigate = (sectionId) => {
+    setActiveNav(sectionId);
+    setMobileMenuOpen(false);
+
+    if (sectionId === "dashboard") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (sectionId === "machines") {
+      const machinesSection = document.getElementById("machines-section");
+      machinesSection?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleSelectMachine = (machine) => {
@@ -74,6 +88,11 @@ function Dashboard() {
       <Sidebar
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
+        activeNav={activeNav}
+        onNavigate={handleNavigate}
+        apiError={error}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -82,26 +101,32 @@ function Dashboard() {
         <main className="flex-1 space-y-6 p-4 sm:p-6 lg:p-8">
           <SummaryCards machines={machines} />
 
-          <FilterBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            statusFilter={statusFilter}
-            onStatusChange={setStatusFilter}
-            onReset={handleResetFilters}
-            totalCount={machines.length}
-            filteredCount={filteredMachines.length}
-          />
+          <section
+            id="machines-section"
+            aria-label="Machine monitoring section"
+            className="scroll-mt-6 space-y-6"
+          >
+            <FilterBar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              onReset={handleResetFilters}
+              totalCount={machines.length}
+              filteredCount={filteredMachines.length}
+            />
 
-          <MachineGrid
-            machines={filteredMachines}
-            loading={loading}
-            error={error}
-            onRetry={handleRetry}
-            hasActiveFilters={hasActiveFilters}
-            onResetFilters={handleResetFilters}
-            selectedMachineId={isPanelOpen ? selectedMachine?.id : null}
-            onSelectMachine={handleSelectMachine}
-          />
+            <MachineGrid
+              machines={filteredMachines}
+              loading={loading}
+              error={error}
+              onRetry={handleRetry}
+              hasActiveFilters={hasActiveFilters}
+              onResetFilters={handleResetFilters}
+              selectedMachineId={isPanelOpen ? selectedMachine?.id : null}
+              onSelectMachine={handleSelectMachine}
+            />
+          </section>
         </main>
       </div>
 
