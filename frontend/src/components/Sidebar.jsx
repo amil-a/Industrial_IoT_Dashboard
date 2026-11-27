@@ -39,7 +39,7 @@ function SidebarContent({
               <span className="block truncate text-base font-semibold tracking-tight text-[#F8FAFC]">
                 PlantMonitor
               </span>
-              <span className="block text-xs text-[#94A3B8]">SCADA v2.4</span>
+              <span className="block text-xs text-[#94A3B8]">Industrial IoT</span>
             </div>
           )}
         </div>
