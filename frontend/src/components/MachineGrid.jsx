@@ -8,6 +8,8 @@ function MachineGrid({
   onRetry,
   hasActiveFilters,
   onResetFilters,
+  selectedMachineId,
+  onSelectMachine,
 }) {
   if (loading) {
     return (
@@ -90,7 +92,12 @@ function MachineGrid({
       className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4"
     >
       {machines.map((machine) => (
-        <MachineCard key={machine.id} machine={machine} />
+        <MachineCard
+          key={machine.id}
+          machine={machine}
+          isSelected={machine.id === selectedMachineId}
+          onSelect={onSelectMachine}
+        />
       ))}
     </section>
   );

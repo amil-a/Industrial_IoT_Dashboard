@@ -18,7 +18,7 @@ const STATUS_STYLES = {
   },
 };
 
-function MachineCard({ machine }) {
+function MachineCard({ machine, isSelected, onSelect }) {
   const statusStyle = STATUS_STYLES[machine.status] || STATUS_STYLES.idle;
   const formattedTimestamp = new Date(machine.lastUpdated).toLocaleString("en-US", {
     month: "short",
@@ -28,12 +28,31 @@ function MachineCard({ machine }) {
     minute: "2-digit",
   });
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onSelect(machine);
+    }
+  };
+
   return (
-    <article className="flex flex-col justify-between rounded-lg border border-[#334155] bg-[#1E293B] p-5 transition-colors hover:border-[#475569]">
+    <article
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect(machine)}
+      onKeyDown={handleKeyDown}
+      aria-pressed={isSelected}
+      aria-label={`Inspect ${machine.name} (${machine.id})`}
+      className={`flex cursor-pointer flex-col justify-between rounded-lg border bg-[#1E293B] p-5 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[#2563EB] ${
+        isSelected
+          ? "border-[#2563EB] ring-1 ring-[#2563EB]/40"
+          : "border-[#334155] hover:border-[#475569]"
+      }`}
+    >
       {/* Card Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <span className="inline-block rounded bg-[#101827] px-2 py-0.5 font-mono text-xs text-[#94A3B8] border border-[#334155]">
+          <span className="inline-block rounded border border-[#334155] bg-[#101827] px-2 py-0.5 font-mono text-xs text-[#94A3B8]">
             {machine.id}
           </span>
           <h3 className="mt-2 text-base font-semibold text-[#F8FAFC]">
@@ -51,7 +70,7 @@ function MachineCard({ machine }) {
 
       {/* Telemetry Metrics */}
       <div className="mt-5 grid grid-cols-2 gap-3 border-t border-[#334155] pt-4">
-        <div className="rounded-md bg-[#101827]/70 p-3 border border-[#334155]/70">
+        <div className="rounded-md border border-[#334155]/70 bg-[#101827]/70 p-3">
           <div className="flex items-center gap-1.5 text-xs text-[#94A3B8]">
             <Thermometer className="h-3.5 w-3.5 text-[#94A3B8]" />
             <span>Temperature</span>
@@ -61,7 +80,7 @@ function MachineCard({ machine }) {
           </p>
         </div>
 
-        <div className="rounded-md bg-[#101827]/70 p-3 border border-[#334155]/70">
+        <div className="rounded-md border border-[#334155]/70 bg-[#101827]/70 p-3">
           <div className="flex items-center gap-1.5 text-xs text-[#94A3B8]">
             <Activity className="h-3.5 w-3.5 text-[#94A3B8]" />
             <span>Vibration</span>

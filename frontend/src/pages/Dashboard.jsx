@@ -1,19 +1,27 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMachines } from "../features/machines/machinesSlice";
+import {
+  fetchMachines,
+  updateMachineStatus,
+  selectMachine,
+  clearSelectedMachine,
+} from "../features/machines/machinesSlice";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SummaryCards from "../components/SummaryCards";
 import FilterBar from "../components/FilterBar";
 import MachineGrid from "../components/MachineGrid";
+import MachineDetailPanel from "../components/MachineDetailPanel";
 
 function Dashboard() {
   const dispatch = useDispatch();
-  const { machines, loading, error } = useSelector((state) => state.machines);
+  const { machines, selectedMachine, loading, error, updating, updateError } =
+    useSelector((state) => state.machines);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchMachines());
@@ -26,6 +34,27 @@ function Dashboard() {
 
   const handleRetry = () => {
     dispatch(fetchMachines());
+  };
+
+  const handleSelectMachine = (machine) => {
+    dispatch(selectMachine(machine));
+    setIsPanelOpen(true);
+  };
+
+  const handleClosePanel = () => {
+    setIsPanelOpen(false);
+    dispatch(clearSelectedMachine());
+  };
+
+  const handleAcknowledgeFault = async (machineId) => {
+    try {
+      await dispatch(
+        updateMachineStatus({ id: machineId, status: "idle" })
+      ).unwrap();
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const filteredMachines = machines.filter((machine) => {
@@ -70,9 +99,21 @@ function Dashboard() {
             onRetry={handleRetry}
             hasActiveFilters={hasActiveFilters}
             onResetFilters={handleResetFilters}
+            selectedMachineId={isPanelOpen ? selectedMachine?.id : null}
+            onSelectMachine={handleSelectMachine}
           />
         </main>
       </div>
+
+      {isPanelOpen && selectedMachine && (
+        <MachineDetailPanel
+          machine={selectedMachine}
+          updating={updating}
+          updateError={updateError}
+          onClose={handleClosePanel}
+          onAcknowledgeFault={handleAcknowledgeFault}
+        />
+      )}
     </div>
   );
 }

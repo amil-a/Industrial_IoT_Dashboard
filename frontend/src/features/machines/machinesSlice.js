@@ -54,7 +54,19 @@ const initialState = {
 const machinesSlice = createSlice({
   name: "machines",
   initialState,
-  reducers: {},
+  reducers: {
+    selectMachine: (state, action) => {
+      state.selectedMachine = action.payload;
+      state.updateError = null;
+    },
+    clearSelectedMachine: (state) => {
+      state.selectedMachine = null;
+      state.updateError = null;
+    },
+    clearUpdateError: (state) => {
+      state.updateError = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // fetchMachines
@@ -109,5 +121,8 @@ const machinesSlice = createSlice({
       });
   },
 });
+
+export const { selectMachine, clearSelectedMachine, clearUpdateError } =
+  machinesSlice.actions;
 
 export default machinesSlice.reducer;
