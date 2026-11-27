@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-control-bg: #101827;
+  --color-control-sidebar: #111C2E;
+  --color-control-card: #1E293B;
+  --color-control-border: #334155;
+  --color-action-primary: #2563EB;
+  --color-status-running: #22C55E;
+  --color-status-idle: #EAB308;
+  --color-status-fault: #EF4444;
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+}
+
+body {
+  background-color: #101827;
+  color: #F8FAFC;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
